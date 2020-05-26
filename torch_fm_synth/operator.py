@@ -13,7 +13,7 @@ class Operator:
 
             if length is None:
                 raise ValueError("Can't use scalar frequency and amplitude " +
-                                "without specifying output length")
+                                 "without specifying output length")
         elif (type(freq) is torch.Tensor
                 and type(amplitude) is torch.Tensor):
 
