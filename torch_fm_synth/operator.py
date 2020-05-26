@@ -7,7 +7,7 @@ class Operator:
     def __init__(self, sr=44100):
         self.sr = sr
 
-    def sample(self, freq, amplitude=1.0, length=None):
+    def sample(self, freq, amplitude=1.0, length=None, phase_mod=0):
         if (type(freq) is not torch.Tensor
                 and type(amplitude) is not torch.Tensor):
 
@@ -29,6 +29,7 @@ class Operator:
 
         phase = freq.cumsum(dim=-1) * math.tau / self.sr
         phase = phase - phase[0]
+        phase = phase + phase_mod
 
         y = torch.cos(phase) * amplitude
         return y
