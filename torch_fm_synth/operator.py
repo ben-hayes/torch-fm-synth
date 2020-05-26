@@ -9,16 +9,17 @@ class Operator:
 
     def sample(self, freq, amplitude=1.0, length=None):
         if (type(freq) is not torch.Tensor
-                and type(amplitude) is not torch.Tensor
-                and length is None):
-            raise ValueError("Can't use scalar frequency and amplitude " +
-                             "without specifying output length")
+                and type(amplitude) is not torch.Tensor):
 
-        if (type(freq) is torch.Tensor
-                and type(amplitude) is torch.Tensor
-                and freq.shape[-1] != amplitude.shape[-1]):
-            raise ValueError("Amplitude and frequency tensor sizes do not " +
-                             "match in time dimension")
+            if length is None:
+                raise ValueError("Can't use scalar frequency and amplitude " +
+                                "without specifying output length")
+        elif (type(freq) is torch.Tensor
+                and type(amplitude) is torch.Tensor):
+
+            if freq.shape[-1] != amplitude.shape[-1]:
+                raise ValueError("Amplitude and frequency tensor sizes do " +
+                                 "not match in time dimension")
 
         if type(freq) is not torch.Tensor:
             freq = torch.ones(length) * freq
