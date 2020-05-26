@@ -81,3 +81,12 @@ class TestOperator(unittest.TestCase):
         operator = Operator(sr=dummy_sr)
         with self.assertRaises(ValueError):
             operator.sample(dummy_freq, dummy_amp)
+
+    def test_throws_if_tensor_freq_and_amp_have_more_than_batch_and_time_dims(self):
+        dummy_sr = 8
+        dummy_freq = torch.tensor([[[0.1]]])
+        dummy_amp = torch.Tensor([[[0.5]]])
+
+        operator = Operator(sr=dummy_sr)
+        with self.assertRaises(ValueError):
+            operator.sample(dummy_freq, dummy_amp)

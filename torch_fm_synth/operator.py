@@ -20,6 +20,9 @@ class Operator:
             if freq.shape[-1] != amplitude.shape[-1]:
                 raise ValueError("Amplitude and frequency tensor sizes do " +
                                  "not match in time dimension")
+            if len(freq.shape) > 2 or len(amplitude.shape) > 2:
+                raise ValueError("Amplitude and frequency tensors can only " +
+                                 "contain batch and time dimensions")
 
         if type(freq) is not torch.Tensor:
             freq = torch.ones(length) * freq
