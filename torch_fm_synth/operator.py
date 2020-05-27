@@ -7,7 +7,7 @@ class Operator(torch.nn.Module):
     def __init__(self, sr=44100):
         self.sr = sr
 
-    def sample(self, freq, amplitude=1.0, length=None, phase_mod=0):
+    def forward(self, freq, amplitude=1.0, length=None, phase_mod=0):
         if (type(freq) is not torch.Tensor
                 and type(amplitude) is not torch.Tensor):
 

@@ -22,7 +22,7 @@ class TestOperator(unittest.TestCase):
         expected_output = torch.Tensor([1, -1, 1, -1])
 
         operator = Operator(sr=dummy_sr)
-        actual_output = operator.sample(dummy_freq, length=sample_length)
+        actual_output = operator.forward(dummy_freq, length=sample_length)
 
         torch.testing.assert_allclose(actual_output, expected_output)
 
@@ -34,7 +34,7 @@ class TestOperator(unittest.TestCase):
         expected_output = torch.Tensor([0.5, -0.5, 0.5, -0.5])
 
         operator = Operator(sr=dummy_sr)
-        actual_output = operator.sample(
+        actual_output = operator.forward(
             dummy_freq,
             amplitude=dummy_amplitude,
             length=sample_length)
@@ -49,7 +49,7 @@ class TestOperator(unittest.TestCase):
         expected_output = torch.Tensor([0.0, -0.4, 0.9, -13.0])
 
         operator = Operator(sr=dummy_sr)
-        actual_output = operator.sample(
+        actual_output = operator.forward(
             dummy_freq,
             amplitude=dummy_amplitude,
             length=sample_length)
@@ -63,7 +63,7 @@ class TestOperator(unittest.TestCase):
         expected_output = torch.Tensor([1, 1, -1, 0])
 
         operator = Operator(sr=dummy_sr)
-        actual_output = operator.sample(
+        actual_output = operator.forward(
             dummy_freq,
             length=sample_length)
 
@@ -76,7 +76,7 @@ class TestOperator(unittest.TestCase):
 
         operator = Operator(sr=dummy_sr)
         with self.assertRaises(ValueError):
-            operator.sample(dummy_freq, dummy_amp)
+            operator.forward(dummy_freq, dummy_amp)
 
     def test_throws_if_tensor_freq_and_amp_are_different_lengths(self):
         dummy_sr = 8
@@ -85,7 +85,7 @@ class TestOperator(unittest.TestCase):
 
         operator = Operator(sr=dummy_sr)
         with self.assertRaises(ValueError):
-            operator.sample(dummy_freq, dummy_amp)
+            operator.forward(dummy_freq, dummy_amp)
 
     def test_throws_if_tensor_freq_and_amp_have_more_than_batch_and_time_dims(
             self):
@@ -95,7 +95,7 @@ class TestOperator(unittest.TestCase):
 
         operator = Operator(sr=dummy_sr)
         with self.assertRaises(ValueError):
-            operator.sample(dummy_freq, dummy_amp)
+            operator.forward(dummy_freq, dummy_amp)
 
     def test_can_set_initial_phase(self):
         dummy_sr = 4
@@ -106,7 +106,7 @@ class TestOperator(unittest.TestCase):
         expected_output = torch.Tensor([0, -0.8, 0, 0.8])
 
         operator = Operator(sr=dummy_sr)
-        actual_output = operator.sample(
+        actual_output = operator.forward(
             dummy_freq,
             dummy_amp,
             phase_mod=dummy_initial_phase,
@@ -122,7 +122,7 @@ class TestOperator(unittest.TestCase):
         expected_output = torch.Tensor([-1, 0, 1, 0])
 
         operator = Operator(sr=dummy_sr)
-        actual_output = operator.sample(
+        actual_output = operator.forward(
             dummy_freq,
             phase_mod=dummy_phase_mod,
             length=sample_length)
@@ -137,7 +137,7 @@ class TestOperator(unittest.TestCase):
 
         operator = Operator(sr=dummy_sr)
         with self.assertRaises(ValueError):
-            operator.sample(
+            operator.forward(
                 dummy_freq,
                 dummy_amp,
                 length=4,
@@ -151,7 +151,7 @@ class TestOperator(unittest.TestCase):
         expected_output = torch.Tensor([[1, 0, -1], [0.5, 0, -0.5]])
 
         operator = Operator(sr=dummy_sr)
-        actual_output = operator.sample(
+        actual_output = operator.forward(
             dummy_freq,
             dummy_amp,
             length=sample_length)
@@ -166,7 +166,7 @@ class TestOperator(unittest.TestCase):
         expected_output = torch.Tensor([[1, 0, -1], [1, 1, 1]])
 
         operator = Operator(sr=dummy_sr)
-        actual_output = operator.sample(
+        actual_output = operator.forward(
             dummy_freq,
             dummy_amp,
             length=sample_length)
@@ -182,7 +182,7 @@ class TestOperator(unittest.TestCase):
         expected_output = torch.Tensor([[1, 0, -1], [-1, 0, 1]])
 
         operator = Operator(sr=dummy_sr)
-        actual_output = operator.sample(
+        actual_output = operator.forward(
             dummy_freq,
             dummy_amp,
             length=sample_length,
