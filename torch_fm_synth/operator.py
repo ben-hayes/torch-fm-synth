@@ -3,7 +3,7 @@ import math
 import torch
 
 
-class Operator:
+class Operator(torch.nn.Module):
     def __init__(self, sr=44100):
         self.sr = sr
 
@@ -24,11 +24,17 @@ class Operator:
                 raise ValueError("Amplitude and frequency tensors can only " +
                                  "contain batch and time dimensions")
 
-        if type(freq) is not torch.Tensor:
+        if type(phase_mod) is torch.Tensor:
+            if len(phase_mod.shape) > 2:
+                raise ValueError("Phase mod tensor can only contain batch " +
+                                 "time dimensions")
+
+        if (type(freq) is not torch.Tensor
+                or type(freq) is torch.Tensor and freq.shape[-1] == 1):
             freq = torch.ones(length) * freq
 
         phase = freq.cumsum(dim=-1) * math.tau / self.sr
-        phase = phase - phase[0]
+        phase = phase - phase.select(-1, 0).unsqueeze(-1)
         phase = phase + phase_mod
 
         y = torch.cos(phase) * amplitude

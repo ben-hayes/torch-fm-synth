@@ -11,6 +11,10 @@ class TestOperator(unittest.TestCase):
         operator = Operator()
         self.assertIsInstance(operator, Operator)
 
+    def test_is_nn_module(self):
+        operator = Operator()
+        self.assertIsInstance(operator, torch.nn.Module)
+
     def test_can_synthesise_sinusoid(self):
         dummy_sr = 2
         dummy_freq = 1
@@ -126,4 +130,62 @@ class TestOperator(unittest.TestCase):
         torch.testing.assert_allclose(actual_output, expected_output)
 
     def test_throws_if_phase_mod_has_more_than_batch_and_time_dims(self):
-        pass
+        dummy_sr = 8
+        dummy_freq = 4
+        dummy_amp = 0.5
+        dummy_phase = torch.Tensor([[[0.1]]])
+
+        operator = Operator(sr=dummy_sr)
+        with self.assertRaises(ValueError):
+            operator.sample(
+                dummy_freq,
+                dummy_amp,
+                length=4,
+                phase_mod=dummy_phase)
+
+    def test_can_use_amp_with_multiple_batches_but_one_time_step(self):
+        dummy_sr = 4
+        dummy_freq = 1
+        dummy_amp = torch.Tensor([[1], [0.5]])
+        sample_length = 3
+        expected_output = torch.Tensor([[1, 0, -1], [0.5, 0, -0.5]])
+
+        operator = Operator(sr=dummy_sr)
+        actual_output = operator.sample(
+            dummy_freq,
+            dummy_amp,
+            length=sample_length)
+
+        torch.testing.assert_allclose(actual_output, expected_output)
+
+    def test_can_use_freq_with_multiple_batches_but_one_time_step(self):
+        dummy_sr = 4
+        dummy_freq = torch.Tensor([[1], [0]])
+        dummy_amp = 1
+        sample_length = 3
+        expected_output = torch.Tensor([[1, 0, -1], [1, 1, 1]])
+
+        operator = Operator(sr=dummy_sr)
+        actual_output = operator.sample(
+            dummy_freq,
+            dummy_amp,
+            length=sample_length)
+
+        torch.testing.assert_allclose(actual_output, expected_output)
+
+    def test_can_use_phase_with_multiple_batches_but_one_time_step(self):
+        dummy_sr = 4
+        dummy_freq = 1
+        dummy_amp = 1
+        dummy_phase = torch.Tensor([[0], [math.pi]])
+        sample_length = 3
+        expected_output = torch.Tensor([[1, 0, -1], [-1, 0, 1]])
+
+        operator = Operator(sr=dummy_sr)
+        actual_output = operator.sample(
+            dummy_freq,
+            dummy_amp,
+            length=sample_length,
+            phase_mod=dummy_phase)
+
+        torch.testing.assert_allclose(actual_output, expected_output)
